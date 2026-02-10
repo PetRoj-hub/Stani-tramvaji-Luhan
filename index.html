@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Power BI report</title>
   <style>
-    :root { --vh: 1vh; }
-    html, body { height:100%; margin:0; background:#0f172a; color:#e2e8f0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
-    .page { min-height:100%; display:grid; grid-template-rows:auto 1fr; }
-    header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-bottom:1px solid #334155; background:#0b1220; position:sticky; top:0; z-index:2; }
-    h1 { margin:0; font-size:clamp(18px,2.2vw,22px); }
+    :root { --max-width: 1400px; --vh: 100vh; }
+    html, body { height: 100%; margin: 0; background:#0f172a; color:#e2e8f0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .wrap { max-width: var(--max-width); margin: 0 auto; padding: 16px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    h1 { font-size: clamp(18px, 2.5vw, 24px); margin: 0; }
     .controls { display:flex; gap:8px; }
-    button { background:#2563eb; color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600; }
+    button { background:#2563eb; color:white; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; }
     button.secondary { background:#334155; }
-    .content { height:calc(100 * var(--vh) - var(--header-h,56px)); min-height:calc(100vh - var(--header-h,56px)); padding:12px 16px; box-sizing:border-box; }
-    .frame { width:100%; height:100%; border:1px solid #334155; border-radius:12px; overflow:hidden; background:#111827; }
-    iframe { width:100%; height:100%; border:0; display:block; }
-    footer { opacity:.7; font-size:12px; padding:8px 16px 16px; }
+    .frame-box { aspect-ratio: 16/9; width:100%; border-radius:12px; overflow:hidden; border:1px solid #334155; background:#111827; }
+    iframe { width:100%; height:100%; border:0; }
+    footer { opacity:.7; font-size:12px; margin-top:10px; }
+    @media (max-width: 768px){ .frame-box{ aspect-ratio: 3/4; } }
   </style>
 </head>
 <body>
-  <div class="page">
-    <header id="siteHeader">
+  <div class="wrap">
+    <header>
       <h1>Power BI report</h1>
       <div class="controls">
         <button id="btnFS">Celá obrazovka</button>
@@ -29,29 +29,28 @@
       </div>
     </header>
 
-    <main class="content">
-      <div class="frame">
-        <!-- Sem vlož odkaz z Publish to web (view?r=...) NEBO Secure embed -->
-        <iframe title="Stání tramvají -Luhan" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=f7f5967f-8073-457e-b8c6-59dd68bd5335&autoAuth=true&ctid=e7e56ba0-22a9-4ee1-a596-891af4935ee3" frameborder="0" allowFullScreen="true"></iframe>
-        </iframe>
-      </div>
-    </main>
-
-    <footer>
-      <p>Veřejně použij „Publish to web“, interně „Secure embed“. „reportEmbed“ vyžaduje JS SDK + token.</p>
+    <!-- TODO: vlož svůj Publish-to-web nebo Secure-Embed URL do src -->
+    <div class="frame-box">
+      <iframe
+        id="pbiFrame"
+        src="https://app.powerbi.com/reportEmbed?reportId=f7f5967f-8073-457e-b8c6-59dd68bd5335&autoAuth=true&ctid=e7e56ba0-22a9-4ee1-a596-891af4935ee3"
+        allowfullscreen
+        sdílení použij „Publish to web“ (iframe). Pro interní sdílení použij „Secure embed – Website or portal“ (vyžaduje přihlášení uživatele). 
+      </p>
     </footer>
   </div>
 
   <script>
-    function setVhVar(){ document.documentElement.style.setProperty('--vh', `${window.innerHeight*0.01}px`); }
-    function setHeader(){ const h=document.getElementById('siteHeader')?.getBoundingClientRect().height||56; document.documentElement.style.setProperty('--header-h', `${h}px`); }
-    setVhVar(); setHeader(); window.addEventListener('resize', ()=>{ setVhVar(); setHeader(); });
-    window.addEventListener('orientationchange', ()=> setTimeout(()=>{ setVhVar(); setHeader(); },100));
     const frame = document.getElementById('pbiFrame');
-    document.getElementById('btnFS').addEventListener('click', ()=>{ if(frame.requestFullscreen) frame.requestFullscreen(); });
-    document.getElementById('btnReload').addEventListener('click', ()=> frame.src = frame.src );
+    document.getElementById('btnFS').addEventListener('click', () => {
+      if (frame.requestFullscreen) frame.requestFullscreen();
+      else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
+      else if (frame.msRequestFullscreen) frame.msRequestFullscreen();
+    });
+    document.getElementById('btnReload').addEventListener('click', () => {
+      frame.src = frame.src;
+    });
   </script>
 </body>
 </html>
-
 
