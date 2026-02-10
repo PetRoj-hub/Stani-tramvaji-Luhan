@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Power BI report</title>
   <style>
-    :root { --vh: 1vh; /* přepíše skript níže pro přesné mobilní výšky */ }
+    :root { --vh: 1vh; }
 
-    /* Základ */
     html, body {
       height: 100%;
       margin: 0;
@@ -16,7 +15,6 @@
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
-    /* Layout: hlavička + obsah, obsah vyplní zbytek okna */
     .page {
       min-height: 100%;
       display: grid;
@@ -31,7 +29,7 @@
       padding: 12px 16px;
       border-bottom: 1px solid #334155;
       background: #0b1220;
-      position: sticky; /* drží se nahoře při menších výškách */
+      position: sticky;
       top: 0;
       z-index: 2;
     }
@@ -42,6 +40,7 @@
     }
 
     .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+
     button {
       background: #2563eb;
       color: white;
@@ -51,13 +50,11 @@
       cursor: pointer;
       font-weight: 600;
     }
+
     button.secondary { background: #334155; }
 
-    /* Kontejner pro iframe: vyplní veškerý zbývající prostor */
     .content {
-      /* 100 * var(--vh) je skutečná výška viewportu (bez UI prvků na mobilu) */
       height: calc(100 * var(--vh) - var(--header-h, 56px));
-      /* fallback pro desktop a prohlížeče bez JS – minimálně viewport minus odhad hlavičky */
       min-height: calc(100vh - var(--header-h, 56px));
       padding: 12px 16px;
       box-sizing: border-box;
@@ -84,12 +81,6 @@
       font-size: 12px;
       padding: 8px 16px 16px;
     }
-
-    @media (max-width: 768px) {
-      /* Na mobilech žádné pevné poměry – iframe vždy vyplní výšku */
-      h1 { font-size: 18px; }
-      button { padding: 9px 12px; }
-    }
   </style>
 </head>
 <body>
@@ -103,68 +94,51 @@
     </header>
 
     <main class="content" id="contentArea">
-      <!-- TODO: vlož svůj Publish-to-web nebo Secure-Embed URL do src -->
       <div class="frame">
-        "https://app.powerbi.com/reportEmbed?reportId=f7f5967f-8073-457e-b8c6-59dd68bd5335&autoAuth=true&ctid=e7e56ba0-22a9-4ee1-a596-891af4935ee3"
-        </iframe>
+        https://app.powerbi.com/reportEmbed?reportId=f7f5967f-8073-457e-b8c6-59dd68bd5335&autoAuth=true&ctid=e7e56ba0-22a9-4ee1-a596-891af4935ee3
       </div>
     </main>
 
     <footer>
-      <p>
-        Tip: „Publish to web“ pro veřejné datasety, „Secure embed“ pro interní (vyžaduje přihlášení).
-      </p>
+      <p>Tento report se přizpůsobuje velikosti obrazovky.</p>
     </footer>
   </div>
 
   <script>
-    // Přesné 1vh na mobilech (odečte lišty prohlížeče)
     function setVhVar() {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
 
-    // Výška hlavičky → proměnná pro výpočet obsahu
     function setHeaderHeightVar() {
       const header = document.getElementById('siteHeader');
       const h = header ? header.getBoundingClientRect().height : 56;
       document.documentElement.style.setProperty('--header-h', `${h}px`);
     }
 
-    // Inicializace
     setVhVar();
     setHeaderHeightVar();
 
-    // Aktualizace při změně velikosti / orientace
     window.addEventListener('resize', () => {
       setVhVar();
       setHeaderHeightVar();
     });
+
     window.addEventListener('orientationchange', () => {
-      // malé zpoždění, aby prohlížeč stihl přepočítat rozložení
       setTimeout(() => { setVhVar(); setHeaderHeightVar(); }, 100);
     });
 
-    // Ovládací prvky
     const frame = document.getElementById('pbiFrame');
 
     document.getElementById('btnFS').addEventListener('click', () => {
-      const el = frame;
-      if (el.requestFullscreen) el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.msRequestFullscreen) el.msRequestFullscreen();
+      if (frame.requestFullscreen) frame.requestFullscreen();
+      else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
+      else if (frame.msRequestFullscreen) frame.msRequestFullscreen();
     });
 
     document.getElementById('btnReload').addEventListener('click', () => {
-      // Zachová URL a obnoví obsah
       frame.src = frame.src;
     });
-
-    // Volitelně: přizpůsobení výšky i po načtení fontů (vliv na header)
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(setHeaderHeightVar);
-    }
   </script>
 </body>
 </html>
-
