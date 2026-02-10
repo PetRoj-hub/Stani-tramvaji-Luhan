@@ -6,81 +6,17 @@
   <title>Power BI report</title>
   <style>
     :root { --vh: 1vh; }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: #0f172a;
-      color: #e2e8f0;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    }
-
-    .page {
-      min-height: 100%;
-      display: grid;
-      grid-template-rows: auto 1fr;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 16px;
-      border-bottom: 1px solid #334155;
-      background: #0b1220;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-
-    h1 {
-      font-size: clamp(18px, 2.2vw, 22px);
-      margin: 0;
-    }
-
-    .controls { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    button {
-      background: #2563eb;
-      color: white;
-      border: 0;
-      padding: 10px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    button.secondary { background: #334155; }
-
-    .content {
-      height: calc(100 * var(--vh) - var(--header-h, 56px));
-      min-height: calc(100vh - var(--header-h, 56px));
-      padding: 12px 16px;
-      box-sizing: border-box;
-    }
-
-    .frame {
-      width: 100%;
-      height: 100%;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #111827;
-    }
-
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      display: block;
-    }
-
-    footer {
-      opacity: .7;
-      font-size: 12px;
-      padding: 8px 16px 16px;
-    }
+    html, body { height:100%; margin:0; background:#0f172a; color:#e2e8f0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+    .page { min-height:100%; display:grid; grid-template-rows:auto 1fr; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-bottom:1px solid #334155; background:#0b1220; position:sticky; top:0; z-index:2; }
+    h1 { margin:0; font-size:clamp(18px,2.2vw,22px); }
+    .controls { display:flex; gap:8px; }
+    button { background:#2563eb; color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600; }
+    button.secondary { background:#334155; }
+    .content { height:calc(100 * var(--vh) - var(--header-h,56px)); min-height:calc(100vh - var(--header-h,56px)); padding:12px 16px; box-sizing:border-box; }
+    .frame { width:100%; height:100%; border:1px solid #334155; border-radius:12px; overflow:hidden; background:#111827; }
+    iframe { width:100%; height:100%; border:0; display:block; }
+    footer { opacity:.7; font-size:12px; padding:8px 16px 16px; }
   </style>
 </head>
 <body>
@@ -93,52 +29,27 @@
       </div>
     </header>
 
-    <main class="content" id="contentArea">
+    <main class="content">
       <div class="frame">
-        https://app.powerbi.com/reportEmbed?reportId=f7f5967f-8073-457e-b8c6-59dd68bd5335&autoAuth=true&ctid=e7e56ba0-22a9-4ee1-a596-891af4935ee3
+        <!-- Sem vlož odkaz z Publish to web (view?r=...) NEBO Secure embed -->
+        SRC_Z_POWER_BI
+        </iframe>
       </div>
     </main>
 
     <footer>
-      <p>Tento report se přizpůsobuje velikosti obrazovky.</p>
+      <p>Veřejně použij „Publish to web“, interně „Secure embed“. „reportEmbed“ vyžaduje JS SDK + token.</p>
     </footer>
   </div>
 
   <script>
-    function setVhVar() {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-
-    function setHeaderHeightVar() {
-      const header = document.getElementById('siteHeader');
-      const h = header ? header.getBoundingClientRect().height : 56;
-      document.documentElement.style.setProperty('--header-h', `${h}px`);
-    }
-
-    setVhVar();
-    setHeaderHeightVar();
-
-    window.addEventListener('resize', () => {
-      setVhVar();
-      setHeaderHeightVar();
-    });
-
-    window.addEventListener('orientationchange', () => {
-      setTimeout(() => { setVhVar(); setHeaderHeightVar(); }, 100);
-    });
-
+    function setVhVar(){ document.documentElement.style.setProperty('--vh', `${window.innerHeight*0.01}px`); }
+    function setHeader(){ const h=document.getElementById('siteHeader')?.getBoundingClientRect().height||56; document.documentElement.style.setProperty('--header-h', `${h}px`); }
+    setVhVar(); setHeader(); window.addEventListener('resize', ()=>{ setVhVar(); setHeader(); });
+    window.addEventListener('orientationchange', ()=> setTimeout(()=>{ setVhVar(); setHeader(); },100));
     const frame = document.getElementById('pbiFrame');
-
-    document.getElementById('btnFS').addEventListener('click', () => {
-      if (frame.requestFullscreen) frame.requestFullscreen();
-      else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
-      else if (frame.msRequestFullscreen) frame.msRequestFullscreen();
-    });
-
-    document.getElementById('btnReload').addEventListener('click', () => {
-      frame.src = frame.src;
-    });
+    document.getElementById('btnFS').addEventListener('click', ()=>{ if(frame.requestFullscreen) frame.requestFullscreen(); });
+    document.getElementById('btnReload').addEventListener('click', ()=> frame.src = frame.src );
   </script>
 </body>
 </html>
